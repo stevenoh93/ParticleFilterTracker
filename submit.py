@@ -25,14 +25,14 @@ def main():
     time.sleep(3.0)
 
   if submission.feedback():
-    feedback = submission.result()
+
+    if submission.console():
+        sys.stdout.write(submission.console())
 
     filename = "%s-result-%s.json" % (quiz, timestamp)
 
     with open(filename, "w") as fd:
-      json.dump(feedback, fd, indent=4, separators=(',', ': '))
-
-    print feedback['console_summary']
+      json.dump(submission.feedback(), fd, indent=4, separators=(',', ': '))
 
     print "(Details available in %s.)" % filename
 
