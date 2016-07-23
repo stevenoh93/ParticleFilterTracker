@@ -8,7 +8,7 @@ from bonnie.submission import Submission
 
 def main():
   parser = argparse.ArgumentParser(description='Submits code to the Udacity site.')
-  parser.add_argument('--provider', choices = ['gt', 'udacity'], default = 'udacity')
+  parser.add_argument('--provider', choices = ['gt', 'udacity'], default = 'gt')
   parser.add_argument('--environment', choices = ['local', 'development', 'staging', 'production'], default = 'production')
 
   args = parser.parse_args()
