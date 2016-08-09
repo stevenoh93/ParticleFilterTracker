@@ -86,25 +86,19 @@ def main():
         num_particles=50, sigma_mse=None, sigma_dyn=None,
         template_coords=template_rect)  # TODO: specify other keyword args that your model expects.
 
-    # 1b
     # TODO: Repeat 1a, but vary template window size and discuss trade-offs (no output images required)
-
-    # 1c
     # TODO: Repeat 1a, but vary the sigma_MSE parameter (no output images required)
-    # Note: To add a parameter, simply pass it in here as a keyword arg and extract it back in __init__()
-
-    # 1d
     # TODO: Repeat 1a, but try to optimize (minimize) num_particles (no output images required)
 
-    # 1e
+    # 1b
     template_rect = {'x': 320.8751, 'y': 175.1776, 'w': 103.5404, 'h': 129.0504}
     run_particle_filter(ParticleFilter,
         os.path.join(input_dir, "noisy_debate.mp4"),
         template_rect,
         {
-            14: os.path.join(output_dir, 'ps7-1-e-1.png'),
-            32: os.path.join(output_dir, 'ps7-1-e-2.png'),
-            46: os.path.join(output_dir, 'ps7-1-e-3.png')
+            14: os.path.join(output_dir, 'ps7-1-b-1.png'),
+            32: os.path.join(output_dir, 'ps7-1-b-2.png'),
+            46: os.path.join(output_dir, 'ps7-1-b-3.png')
         },
         num_particles=50, sigma_mse=None, sigma_dyn=None, particle_sigma=None,
         template_coords=template_rect)  # TODO: specify other keyword args that your model expects.
@@ -168,16 +162,18 @@ def main():
         num_particles=None, sigma_mse=None, sigma_dyn=None, particle_sigma=None,
         chi_sigma=None, hist_bins_num=None, template_coords=template_rect)
 
-    # 4: Implement a more sophisticated model to deal with occlusions and size/perspective changes
+    # 4: Discussion problems. See problem set document.
+
+    # 5: Implement a more sophisticated model to deal with occlusions and size/perspective changes
     template_rect = {'x': None, 'y': None, 'w': None, 'h': None}
     run_particle_filter(MDParticleFilter,
         os.path.join(input_dir, "pedestrians.mp4"),
         template_rect,
         {
-            'template': os.path.join(output_dir, 'ps7-4-a-1.png'),
-            40: os.path.join(output_dir, 'ps7-4-a-2.png'),
-            100: os.path.join(output_dir, 'ps7-4-a-3.png'),
-            240: os.path.join(output_dir, 'ps7-4-a-4.png')
+            'template': os.path.join(output_dir, 'ps7-5-a-1.png'),
+            40: os.path.join(output_dir, 'ps7-5-a-2.png'),
+            100: os.path.join(output_dir, 'ps7-5-a-3.png'),
+            240: os.path.join(output_dir, 'ps7-5-a-4.png')
         },
         num_particles=None, sigma_mse=None, sigma_dyn=None, particle_sigma=None, alpha=None,
         template_coords=template_rect)  # Add more if you need to
