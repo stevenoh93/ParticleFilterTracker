@@ -12,8 +12,3 @@ Clone this repository recursively:
 ##Instructions
 If you have questions, please post them to Piazza.
 [Problem Set 7: Particle Filter Tracking](https://docs.google.com/document/d/11ZTbKVE88qmZHD1v7pe4Uuh3Nk_3-lVjyJL83GRvo7o/edit?usp=sharing)
-
-Once you are ready to submit run the following command:
-`python submit.py --provider gt`
-
-This will automatically send your `ps7.py` file to the auto grader. Notice that **only one file** is sent so do not split your code in multiple files.
