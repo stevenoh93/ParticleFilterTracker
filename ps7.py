@@ -23,7 +23,8 @@ class ParticleFilter(object):
         - self.particles (numpy.array): Here you will store your particles. This should be a
                                         N x 2 array where N = self.num_particles. This component
                                         is used by the autograder so make sure you define it
-                                        appropriately.
+                                        appropriately. Each particle should be added using the
+                                        convention [row, col]
         - self.weights (numpy.array): Array of N weights, one for each particle.
                                       Hint: initialize them with a uniform normalized distribution
                                       (equal weight for each one). Required by the autograder
@@ -101,8 +102,8 @@ class ParticleFilter(object):
         v_weighted_mean = 0
 
         for i in range(self.num_particles):
-            u_weighted_mean += self.particles[i, 1] * self.weights[i]
-            v_weighted_mean += self.particles[i, 0] * self.weights[i]
+            u_weighted_mean += self.particles[i, 0] * self.weights[i]
+            v_weighted_mean += self.particles[i, 1] * self.weights[i]
 
         # Complete the rest of the code as instructed.
 
