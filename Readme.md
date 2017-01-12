@@ -1,14 +1,16 @@
-#Problem Set 7: Particle Filter Tracking
+# Problem Set 7: Particle Filter Tracking
 
-##Description
+## Description
 In this problem set you are going to experiment with a particle filter tracker such as was described in class.
 
+## Requirements
+Install the pypi package called "nelson" by running:
+`pip install nelson`
+
 ## Setup
-Clone this repository recursively:
-`git clone --recursive https://github.gatech.edu/omscs6476/ps07.git`
+Clone this repository:
+`git clone https://github.gatech.edu/omscs6476/ps07.git`
 
-(If your version of git does not support recurse clone, then clone without the option and tun `git submodule init` and `git submodule update`).
-
-##Instructions
-If you have questions, please post them to Piazza.
+## Instructions
+The problem set requirements can be found in this link:
 [Problem Set 7: Particle Filter Tracking](https://docs.google.com/document/d/11ZTbKVE88qmZHD1v7pe4Uuh3Nk_3-lVjyJL83GRvo7o/edit?usp=sharing)
