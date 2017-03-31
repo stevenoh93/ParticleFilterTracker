@@ -36,7 +36,7 @@ def main():
     if quiz == "ps07":
         filenames = ["ps7.py"]
     else:
-        filenames = ['ps07_report.pdf', 'experiment.py']
+        filenames = ['ps07_report.pdf', 'experiment.py', 'ps7.py']
 
     require_pledges()
 
