@@ -123,9 +123,9 @@ def part_2a():
                         template_rect,
                         {
                             'template': os.path.join(output_dir, 'ps7-2-a-1.png'),
-                            15: os.path.join(output_dir, 'ps7-2-a-2.png'),
+                            22: os.path.join(output_dir, 'ps7-2-a-2.png'),
                             50: os.path.join(output_dir, 'ps7-2-a-3.png'),
-                            140: os.path.join(output_dir, 'ps7-2-a-4.png')
+                            160: os.path.join(output_dir, 'ps7-2-a-4.png')
                         },
                         num_particles=num_particles, sigma_mse=sigma_mse, sigma_dyn=sigma_dyn, alpha=alpha,
                         template_coords=template_rect)  # Add more if you need to
@@ -143,9 +143,9 @@ def part_2b():
                         template_rect,
                         {
                             'template': os.path.join(output_dir, 'ps7-2-b-1.png'),
-                            15: os.path.join(output_dir, 'ps7-2-b-2.png'),
+                            22: os.path.join(output_dir, 'ps7-2-b-2.png'),
                             50: os.path.join(output_dir, 'ps7-2-b-3.png'),
-                            140: os.path.join(output_dir, 'ps7-2-b-4.png')
+                            160: os.path.join(output_dir, 'ps7-2-b-4.png')
                         },
                         num_particles=num_particles, sigma_mse=sigma_mse, sigma_dyn=sigma_dyn, alpha=alpha,
                         template_coords=template_rect)  # Add more if you need to
@@ -184,9 +184,9 @@ def part_3b():
                         template_rect,
                         {
                             'template': os.path.join(output_dir, 'ps7-3-b-1.png'),
-                            15: os.path.join(output_dir, 'ps7-3-b-2.png'),
+                            22: os.path.join(output_dir, 'ps7-3-b-2.png'),
                             50: os.path.join(output_dir, 'ps7-3-b-3.png'),
-                            140: os.path.join(output_dir, 'ps7-3-b-4.png')
+                            160: os.path.join(output_dir, 'ps7-3-b-4.png')
                         },
                         num_particles=num_particles, sigma_mse=sigma_chi, sigma_dyn=sigma_dyn,
                         hist_bins_num=hist_bins_num,
