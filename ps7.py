@@ -41,7 +41,7 @@ class ParticleFilter(object):
         """
 
         self.num_particles = kwargs.get('num_particles')  # required by the autograder
-        self.sigma_exp = kwargs.get('sigma_mse')  # required by the autograder
+        self.sigma_exp = kwargs.get('sigma_exp')  # required by the autograder
         self.sigma_dyn = kwargs.get('sigma_dyn')  # required by the autograder
         self.template_rect = kwargs.get('template_coords')  # required by the autograder
         # If you want to add more parameters, make sure you set a default value so that

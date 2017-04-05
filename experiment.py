@@ -89,7 +89,7 @@ def part_1a():
                             94: os.path.join(output_dir, 'ps7-1-a-3.png'),
                             171: os.path.join(output_dir, 'ps7-1-a-4.png')
                         },  # frames to save, mapped to filenames, and 'template' if desired
-                        num_particles=num_particles, sigma_mse=sigma_mse, sigma_dyn=sigma_dyn,
+                        num_particles=num_particles, sigma_exp=sigma_mse, sigma_dyn=sigma_dyn,
                         template_coords=template_rect)  # Add more if you need to
 
 
@@ -107,7 +107,7 @@ def part_1b():
                             94: os.path.join(output_dir, 'ps7-1-b-2.png'),
                             530: os.path.join(output_dir, 'ps7-1-b-3.png')
                         },
-                        num_particles=num_particles, sigma_mse=sigma_mse, sigma_dyn=sigma_dyn,
+                        num_particles=num_particles, sigma_exp=sigma_mse, sigma_dyn=sigma_dyn,
                         template_coords=template_rect)  # Add more if you need to
 
 
@@ -127,7 +127,7 @@ def part_2a():
                             50: os.path.join(output_dir, 'ps7-2-a-3.png'),
                             160: os.path.join(output_dir, 'ps7-2-a-4.png')
                         },
-                        num_particles=num_particles, sigma_mse=sigma_mse, sigma_dyn=sigma_dyn, alpha=alpha,
+                        num_particles=num_particles, sigma_exp=sigma_mse, sigma_dyn=sigma_dyn, alpha=alpha,
                         template_coords=template_rect)  # Add more if you need to
 
 
@@ -147,7 +147,7 @@ def part_2b():
                             50: os.path.join(output_dir, 'ps7-2-b-3.png'),
                             160: os.path.join(output_dir, 'ps7-2-b-4.png')
                         },
-                        num_particles=num_particles, sigma_mse=sigma_mse, sigma_dyn=sigma_dyn, alpha=alpha,
+                        num_particles=num_particles, sigma_exp=sigma_mse, sigma_dyn=sigma_dyn, alpha=alpha,
                         template_coords=template_rect)  # Add more if you need to
 
 
@@ -167,7 +167,7 @@ def part_3a():
                             94: os.path.join(output_dir, 'ps7-3-a-3.png'),
                             171: os.path.join(output_dir, 'ps7-3-a-4.png')
                         },
-                        num_particles=num_particles, sigma_mse=sigma_chi, sigma_dyn=sigma_dyn,
+                        num_particles=num_particles, sigma_exp=sigma_chi, sigma_dyn=sigma_dyn,
                         hist_bins_num=hist_bins_num,
                         template_coords=template_rect)  # Add more if you need to
 
@@ -188,7 +188,7 @@ def part_3b():
                             50: os.path.join(output_dir, 'ps7-3-b-3.png'),
                             160: os.path.join(output_dir, 'ps7-3-b-4.png')
                         },
-                        num_particles=num_particles, sigma_mse=sigma_chi, sigma_dyn=sigma_dyn,
+                        num_particles=num_particles, sigma_exp=sigma_chi, sigma_dyn=sigma_dyn,
                         hist_bins_num=hist_bins_num,
                         template_coords=template_rect)  # Add more if you need to
 
@@ -222,7 +222,7 @@ def part_5():
                             100: os.path.join(output_dir, 'ps7-5-a-3.png'),
                             240: os.path.join(output_dir, 'ps7-5-a-4.png')
                         },
-                        num_particles=num_particles, sigma_mse=sigma_md, sigma_dyn=sigma_dyn,
+                        num_particles=num_particles, sigma_exp=sigma_md, sigma_dyn=sigma_dyn,
                         template_coords=template_rect)  # Add more if you need to
 
 if __name__ == '__main__':
