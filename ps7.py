@@ -35,7 +35,7 @@ class ParticleFilter(object):
             template (numpy.array): color BGR uint8 image of patch to track, values in [0, 255].
             kwargs: keyword arguments needed by particle filter model, including:
                     - num_particles (int): number of particles.
-                    - sigma_mse (float): sigma value used in the similarity measure.
+                    - sigma_exp (float): sigma value used in the similarity measure.
                     - sigma_dyn (float): sigma value that can be used when adding gaussian noise to u and v.
                     - template_rect (dict): Template coordinates with x, y, width, and height values.
         """
