@@ -2,6 +2,8 @@
 
 import numpy as np
 import cv2
+# import matplotlib.pyplot as plt
+# import matplotlib.image as mpimg
 
 import os
 
@@ -52,8 +54,14 @@ class ParticleFilter(object):
 
         self.template = template
         self.frame = frame
-        self.particles = None  # Todo: Initialize your particles array. Read the docstring.
-        self.weights = None  # Todo: Initialize your weights array. Read the docstring.
+        self.particles = np.random.rand(self.num_particles, 2) * [frame.shape[0] - (int)(self.template_rect['h']), frame.shape[1] - (int)(self.template_rect['w'])]
+        self.particles += [(int)(self.template_rect['h']/2), (int)(self.template_rect['w']/2)]
+        # rows = np.linspace(self.template_rect['h']/2, frame.shape[0] - (int)(self.template_rect['h'])/2, num=self.num_particles)
+        # cols = np.linspace(self.template_rect['w']/2, frame.shape[1] - (int)(self.template_rect['w'])/2, num=self.num_particles)
+        # self.particles = np.hstack((np.reshape(rows,(self.num_particles,1)), np.reshape(cols,(self.num_particles,1))))
+        self.weights = np.ones(self.num_particles, dtype='float') / self.num_particles
+        self.org_count = self.num_particles
+        self.count = 0
         # Initialize any other components you may need when designing your filter.
 
     def get_particles(self):
@@ -94,7 +102,66 @@ class ParticleFilter(object):
         Returns:
             None.
         """
+        nu = 0
+        frame_cp = np.copy(frame)
+        frame_gray = 0.3*frame_cp[:,:,2] + 0.58*frame_cp[:,:,1] + 0.12*frame_cp[:,:,0]
+        templ = 0.3*self.template[:,:,2] + 0.58*self.template[:,:,1] + 0.12*self.template[:,:,0]
+        if self.count == 0:
+            self.num_particles = 1000
+            if self.weights.shape[0] != 1000:
+                self.weights = np.ones(self.num_particles, dtype='float') / self.num_particles
+                self.particles = np.random.rand(self.num_particles, 2) * [frame.shape[0] - (int)(self.template_rect['h']), frame.shape[1] - (int)(self.template_rect['w'])]
+                self.particles += [(int)(self.template_rect['h']/2), (int)(self.template_rect['w']/2)]
+        elif self.count == 10:
+            self.num_particles = self.org_count
+            self.weights = np.sort(self.weights)[-self.num_particles:]
+            self.weights /= np.sum(self.weights)
+        new_weights = np.array([])
+        new_particles = np.array([])
+        m, n, c = self.template.shape
+        m+=0.0
+        n+=0.0
+        fs = frame_gray.shape
+        num_part = 0
+        # for i in range(0,self.num_particles):
+        while num_part < self.num_particles:
+            # idx = self.findNextIdx(sample_idxs)
+            idx = np.random.choice(self.num_particles, 1, p=self.weights)[0]
+            new_pos = self.particles[idx, :]
+            new_pos += np.random.normal(0, self.sigma_dyn, size=new_pos.shape)
+            # if new_pos[0]-m/2 < 0 or fs[0]-new_pos[0]-m/2 <= 0 or new_pos[1]-n/2 < 0 or fs[1]-new_pos[1]-n/2 <= 0:
+            #     continue
+            if new_pos[0]-m/2 < 0:
+                new_pos[0] = m/2
+            if fs[0]-new_pos[0]-m/2 <= 0:
+                new_pos[0] = fs[0]-m/2-1
+            if new_pos[1]-n/2 < 0:
+                new_pos[1] = n/2
+            if fs[1]-new_pos[1]-n/2 < 0:
+                new_pos[1] = fs[1]-n/2-1
+            diff = templ - frame_gray[(int)(new_pos[0]-m/2):(int)(new_pos[0]+m/2), (int)(new_pos[1]-n/2):(int)(new_pos[1]+n/2)]
+            diffsq = diff*diff
+            mse = np.mean(diffsq)
+            new_weights = np.append(new_weights, np.exp(-mse/(2*self.sigma_exp*self.sigma_exp)))
+            new_particles = np.append(new_particles, [(int)(new_pos[0]), (int)(new_pos[1])])
+            num_part += 1
+            nu += new_weights[num_part-1]
         pass
+        if nu == 0:
+            self.weights = np.ones(self.num_particles, dtype='float') / new_weights.shape[0]
+        else:
+            self.weights = new_weights/nu
+        self.particles = np.reshape(new_particles, (num_part, 2))
+        self.count += 1
+        # self.render(frame)
+
+    def findNextIdx(self, idxs):
+        idx = np.nonzero(idxs)[0]
+        if idx.shape[0] == 0:
+            return -1
+        ret = idx[0]
+        idxs[ret] -= 1
+        return ret
 
     def render(self, frame_in):
         """Visualizes current particle filter state.
@@ -123,13 +190,24 @@ class ParticleFilter(object):
 
         u_weighted_mean = 0
         v_weighted_mean = 0
+        dist = 0
 
         for i in range(self.num_particles):
             u_weighted_mean += self.particles[i, 0] * self.weights[i]
             v_weighted_mean += self.particles[i, 1] * self.weights[i]
-
-        # Complete the rest of the code as instructed.
-        pass
+            cv2.circle(frame_in, ((int)(self.particles[i,1]),(int)(self.particles[i,0])), 2, (0,0,255), thickness=1)
+        for i in range(self.num_particles):
+            dist += np.linalg.norm([u_weighted_mean-self.particles[i,0], v_weighted_mean-self.particles[i,1]]) * self.weights[i]
+        tl = ((int)(v_weighted_mean - self.template.shape[1]/2), (int)(u_weighted_mean - self.template.shape[0]/2))
+        br = ((int)(v_weighted_mean + self.template.shape[1]/2), (int)(u_weighted_mean + self.template.shape[0]/2))
+        cv2.rectangle(frame_in,tl,br,(0,255,0),2)
+        cv2.circle(frame_in, ((int)(v_weighted_mean),(int)(u_weighted_mean)), (int)(dist), (255,0,0), thickness=2)
+        # cv2.imshow('image', frame_in)
+        # cv2.waitKey(1)
+        # g = cv2.cvtColor(self.template.astype('float32'),  cv2.COLOR_BGR2GRAY)
+        # tmplgray = cv2.normalize(g, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+        # cv2.imshow('templ', tmplgray)
+        # cv2.waitKey(1)
 
 
 class AppearanceModelPF(ParticleFilter):
@@ -142,10 +220,12 @@ class AppearanceModelPF(ParticleFilter):
         called alpha which is explained in the problem set documentation. By calling super(...) all the elements used
         in ParticleFilter will be inherited so you do not have to declare them again.
         """
-
         super(AppearanceModelPF, self).__init__(frame, template, **kwargs)  # call base class constructor
-
         self.alpha = kwargs.get('alpha')  # required by the autograder
+        self.count = 0
+        # self.fig=plt.figure()
+        # self.window = self.fig.add_subplot(111)
+        # self.img = self.window.imshow(self.template)
         # If you want to add more parameters, make sure you set a default value so that
         # your test doesn't fail the autograder because of an unknown or None value.
         #
@@ -153,18 +233,79 @@ class AppearanceModelPF(ParticleFilter):
         # self.some_parameter_name = kwargs.get('parameter_name', default_value)
 
     def process(self, frame):
-        """Processes a video frame (image) and updates the filter's state.
-
-        This process is also inherited from ParticleFilter. Depending on your implementation, you may comment out this
-        function and use helper methods that implement the "Appearance Model" procedure.
-
-        Args:
-            frame (numpy.array): color BGR uint8 image of current video frame, values in [0, 255].
-
-        Returns:
-            None.
-        """
+        nu = 0
+        frame_cp = np.copy(frame)
+        # frame_gray = cv2.cvtColor(frame_cp, cv2.COLOR_RGB2GRAY).astype('float')
+        frame_gray = 0.3*frame_cp[:,:,2] + 0.58*frame_cp[:,:,1] + 0.12*frame_cp[:,:,0]
+        templ = 0.3*self.template[:,:,2] + 0.58*self.template[:,:,1] + 0.12*self.template[:,:,0]
+        new_weights = np.array([])
+        new_particles = np.array([])
+        m, n, c = self.template.shape
+        m+=0.0
+        n+=0.0
+        fs = frame_gray.shape
+        num_part = 0
+        # for i in range(0,self.num_particles):
+        while num_part < self.num_particles:
+            # idx = self.findNextIdx(sample_idxs)
+            idx = np.random.choice(self.num_particles, 1, p=self.weights)[0]
+            new_pos = self.particles[idx, :]
+            new_pos += np.random.normal(0, self.sigma_dyn, size=new_pos.shape)
+            if new_pos[0]-m/2 < 0:
+                new_pos[0] = m/2
+            if fs[0]-new_pos[0]-m/2 <= 0:
+                new_pos[0] = fs[0]-m/2-1
+            if new_pos[1]-n/2 < 0:
+                new_pos[1] = n/2
+            if fs[1]-new_pos[1]-n/2 < 0:
+                new_pos[1] = fs[1]-n/2-1
+            diff = templ - frame_gray[(int)(new_pos[0]-m/2):(int)(new_pos[0]+m/2), (int)(new_pos[1]-n/2):(int)(new_pos[1]+n/2)]
+            diffsq = diff*diff
+            mse = np.mean(diffsq)
+            new_weights = np.append(new_weights, np.exp(-mse/(2*self.sigma_exp*self.sigma_exp)))
+            new_particles = np.append(new_particles, [(int)(new_pos[0]), (int)(new_pos[1])])
+            num_part += 1
+            nu += new_weights[num_part-1]
         pass
+        if nu == 0:
+            self.weights = np.ones(self.num_particles, dtype='float') / new_weights.shape[0]
+        else:
+            self.weights = new_weights/nu
+        self.particles = np.reshape(new_particles, (num_part, 2))
+        u_weighted_mean=0.0
+        v_weighted_mean=0.0
+        for i in range(self.num_particles):
+            u_weighted_mean += self.particles[i, 0] * self.weights[i]
+            v_weighted_mean += self.particles[i, 1] * self.weights[i]
+        new_templ = frame[(int)(u_weighted_mean-m/2):(int)(u_weighted_mean+m/2), (int)(v_weighted_mean-n/2):(int)(v_weighted_mean+n/2), :]
+        self.template = self.alpha * new_templ + (1-self.alpha)*self.template
+        self.count += 1
+        # if self.count == 1:
+        #     cv2.imwrite('out0.jpg', self.template)
+        # if self.count == 2:
+        #     cv2.imwrite('out01.jpg', self.template)
+        # if self.count == 3:
+        #     cv2.imwrite('out02.jpg', self.template)
+        # if self.count == 4:
+        #     cv2.imwrite('out03.jpg', self.template)
+        # if self.count == 5:
+        #     cv2.imwrite('out04.jpg', self.template)
+        # if self.count == 10:
+        #     cv2.imwrite('out1.jpg', self.template)
+        # if self.count == 20:
+        #     cv2.imwrite('out2.jpg', self.template)
+        # if self.count == 30:
+        #     cv2.imwrite('out3.jpg', self.template)
+        # if self.count == 40:
+        #     cv2.imwrite('out4.jpg', self.template)
+        # if self.count == 50:
+        #     cv2.imwrite('out5.jpg', self.template)
+        # if self.count == 60:
+        #     cv2.imwrite('out6.jpg', self.template)
+        # if self.count == 70:
+        #     cv2.imwrite('out7.jpg', self.template)
+
+        # self.render(frame)
 
 
 class MeanShiftLitePF(ParticleFilter):
@@ -197,8 +338,55 @@ class MeanShiftLitePF(ParticleFilter):
         Returns:
             None.
         """
+        nu = 0
+        frame_cp = np.copy(frame)
+        templ = self.template
+        totalTmplHist = self.findHist(templ)
+        new_weights = np.array([])
+        new_particles = np.array([])
+        m, n, c = self.template.shape
+        m+=0.0
+        n+=0.0
+        fs = frame_cp.shape
+        num_part = 0
+        # for i in range(0,self.num_particles):
+        while num_part < self.num_particles:
+            # idx = self.findNextIdx(sample_idxs)
+            idx = np.random.choice(self.num_particles, 1, p=self.weights)[0]
+            new_pos = self.particles[idx, :]
+            new_pos += np.random.normal(0, self.sigma_dyn, size=new_pos.shape)
+            if new_pos[0]-m/2 < 0:
+                new_pos[0] = m/2
+            if fs[0]-new_pos[0]-m/2 <= 0:
+                new_pos[0] = fs[0]-m/2-1
+            if new_pos[1]-n/2 < 0:
+                new_pos[1] = n/2
+            if fs[1]-new_pos[1]-n/2 < 0:
+                new_pos[1] = fs[1]-n/2-1
+            totalPartHist = self.findHist(frame_cp[(int)(new_pos[0]-m/2):(int)(new_pos[0]+m/2), (int)(new_pos[1]-n/2):(int)(new_pos[1]+n/2),:])
+            diff = totalTmplHist - totalPartHist
+            diffsq = diff * diff
+            sums = totalTmplHist + totalPartHist
+            sums[np.where(sums==0)] += 100000
+            div = diffsq / sums
+            chi = 0.5 * np.sum(div)
+            new_weights = np.append(new_weights, np.exp(-chi/(2*self.sigma_exp*self.sigma_exp)))
+            new_particles = np.append(new_particles, [(int)(new_pos[0]), (int)(new_pos[1])])
+            num_part += 1
+            nu += new_weights[num_part-1]
         pass
+        if nu == 0:
+            self.weights = np.ones(self.num_particles, dtype='float') / new_weights.shape[0]
+        else:
+            self.weights = new_weights/nu
+        self.particles = np.reshape(new_particles, (num_part, 2))
+        # self.render(frame)
 
+    def findHist(self, image):
+        btmplHist = cv2.calcHist([image],[0], None, [self.num_bins], [0, 256])
+        gtmplHist = cv2.calcHist([image],[1], None, [self.num_bins], [0, 256])
+        rtmplHist = cv2.calcHist([image],[2], None, [self.num_bins], [0, 256])
+        return np.append(np.append(btmplHist, gtmplHist), rtmplHist)
 
 class MDParticleFilter(ParticleFilter):
     """A variation of particle filter tracker that incorporates more dynamics."""
